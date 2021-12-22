@@ -43,11 +43,11 @@
               <img :src="`http://openweathermap.org/img/wn/${ weatherData.weather[0].icon }@2x.png`">
             </div>
           </div>
-          <div class = "col row" style = "overflow: auto">
+          <div class = "col row text-white" style = "overflow: auto" >
             <div class="text-h3 text-weight-thin q-my-lq relative-position row" v-for="hour in weatherHourly" :key="hour.dt">
               <div class="col-4"><img width="75" height="75" :src="`http://openweathermap.org/img/wn/${ hour.weather[0].icon }@2x.png`"></div>
               <div class="col">
-                <div class="row text-h5">{{hour.dt}}</div>
+                <div class="row text-h5">{{formatHour(hour.dt)}}</div>
                 <div class="row">
                   <span>{{ Math.round(hour.temp - 273.15) }}</span>
                   <span class="text-h6 relative-position">&deg;C</span>
@@ -56,8 +56,7 @@
             </div>
           </div>
         </div>
-        <!-- TODO change time -->
-        <div class="col-4">
+        <div class="col-4 text-white">
           <div class="text-h3 text-weight-thin q-my-lq relative-position row" v-for="day in weatherDailys" :key="day.dt">
             <div class="col-4"><img width="75" height="75" :src="`http://openweathermap.org/img/wn/${ day.weather[0].icon }@2x.png`"></div>
             <div class="col">
@@ -75,7 +74,7 @@
     </template>
 
     <template v-else>
-      <div class="col column text-center">
+      <div class="col column text-center text-white">
         <div class="col text-h2 text-weight-thin">
           Weather<br>App
         </div>
@@ -144,49 +143,68 @@ export default defineComponent({
         });
       }
     },
-    getWeatherByCoords() {
+    async getWeatherByCoords() {
       this.$q.loading.show()
-      api.get(`${this.apiUrl}lat=${this.lat}&lon=${this.lon}&appid=${this.apiKey}&units=metric`)
+      await api.get(`${this.apiUrl}lat=${this.lat}&lon=${this.lon}&appid=${this.apiKey}&units=metric`)
         .then(response => {
+          console.log(response.data);
           this.weatherData = response.data
         })
 
-      api.get(`${this.apiUrl2}lat=${this.lat}&lon=${this.lon}&exclude=current,minutely,hourly&appid=${this.apiKey}`)
+      this.getDaily(this.lat,this.lon)
+      this.getHourly(this.lat,this.lon)
+        
+    },
+    getDaily(lat,lon){
+      api.get(`${this.apiUrl2}lat=${lat}&lon=${lon}&exclude=current,minutely,hourly&appid=${this.apiKey}`)
         .then(response => {
           this.weatherDailys = response.data.daily
+          // console.log(this.lat, this.lon)
           console.log(this.weatherDaily)
           // this.$q.loading.hide()
         })
-      
-      api.get(`${this.apiUrl2}lat=${this.lat}&lon=${this.lon}&exclude=current,minutely,daily&appid=${this.apiKey}`)
+    },
+    getHourly(lat,lon){
+      api.get(`${this.apiUrl2}lat=${lat}&lon=${lon}&exclude=current,minutely,daily&appid=${this.apiKey}`)
         .then(response => {
           this.weatherHourly = response.data.hourly
           this.weatherHourly.splice(12,36)
           this.$q.loading.hide()
         })
-        
     },
-    getWeatherBySearch() {
+    async getWeatherBySearch() {
+      let latitude = 0
+      let longitude = 0
       this.$q.loading.show()
-      api.get(`${this.apiUrl}q=${ this.search }&appid=${this.apiKey}&units=metric`)
+      await api.get(`${this.apiUrl}q=${ this.search }&appid=${this.apiKey}&units=metric`)
         .then(response => {
           this.weatherData = response.data
-          this.$q.loading.hide()
+          // this.$q.loading.hide()
+          latitude = response.data.coord.lat
+          longitude = response.data.coord.lon
         })
+      this.getDaily(latitude,longitude)
+      this.getHourly(latitude,longitude)
     },
     weekDate (value) {
     const entireWeek = moment(value).format("MMMM D -") + moment(value).add(7, 'days').format("D YYYY") 
     return entireWeek; // July 6 - 13 2020
     },
-      dayFullName (date) {
-      const getFullName = moment(date).format('dddd');
-      return getFullName // Monday, Tuesday etcetera
+    dayFullName (date) {
+      let myDate = new Date(date * 1000)
+      let myDay = moment(myDate, 'x').format('dddd DD/MM')
+      return myDay
     },
     format_date(value){
-         if (value) {
-           return moment(String(value)).format('MM/DD/YYYY hh:mm')
-        }
+      if (value) {
+          return moment(String(value)).format('MM/DD/YYYY hh:mm')
+      }
     },
+    formatHour(date){
+      let myDate = new Date(date * 1000)
+      let myDay = moment(myDate, 'x').format('hh:mm A DD/MM')
+      return myDay
+    }
   }
 })
 </script>
