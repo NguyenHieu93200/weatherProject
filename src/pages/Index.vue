@@ -21,7 +21,7 @@
       <div class="row">
         <div class="col-8 column">
           <div class="col-8">
-            <div class="col text-white text-center">
+            <div class="col text-yellow text-center">
               <div class="text-h4 text-weight-light">
                 {{ weatherData.name }}
               </div>
@@ -32,11 +32,63 @@
                 <span>{{ Math.round(weatherData.main.temp) }}</span>
                 <span class="text-h4 relative-position degree">&deg;C</span>
               </div>
+              
             </div>
+
             <div class="col text-center">
               <img
                 :src="`http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`"
               />
+              
+            </div>
+            <div class="col text-center">
+              <q-btn label="Detail" color="primary" @click="carousel = true" />
+              <q-dialog v-model="carousel">
+                <q-carousel
+                  transition-prev="slide-right"
+                  transition-next="slide-left"
+                  swipeable
+                  animated
+                  v-model="slide"
+                  control-color="primary"
+                  navigation-icon="radio_button_unchecked"
+                  navigation
+                  padding
+                  height="200px"
+                  class="bg-white shadow-1 rounded-borders"
+                >
+                  <q-carousel-slide
+                    :name="1"
+                    class="column no-wrap flex-center"
+                  >
+                    <q-icon name="style" color="primary" size="56px" />
+                    <div class="q-mt-md text-center">Wind speed: {{ weatherData.wind.speed }} m/s</div>
+                    <div class="q-mt-md text-center">Wind gust: {{ weatherData.wind.gust }} m/s</div>
+                    <div class="q-mt-md text-center">Wind degree: {{ weatherData.wind.deg }} degree direction</div>
+                  </q-carousel-slide>
+                  <q-carousel-slide
+                    :name="2"
+                    class="column no-wrap flex-center"
+                  >
+                    <q-icon name="live_tv" color="primary" size="56px" />
+                    <div class="q-mt-md text-center">Humidity: {{ weatherData.main.humidity }} %</div>
+                  </q-carousel-slide>
+                  <q-carousel-slide
+                    :name="3"
+                    class="column no-wrap flex-center"
+                  >
+                    <q-icon name="layers" color="primary" size="56px" />
+                    <div class="q-mt-md text-center">Status: {{ weatherData.weather[0].description }} </div>
+                  </q-carousel-slide>
+                  <q-carousel-slide
+                    :name="4"
+                    class="column no-wrap flex-center"
+                  >
+                    <q-icon name="terrain" color="primary" size="56px" />
+                    <div class="q-mt-md text-center">Sea level: {{ weatherData.main.sea_level }} </div>
+                  </q-carousel-slide>
+                </q-carousel>
+              </q-dialog>
             </div>
           </div>
           <!-- <div class = "col row text-white" style = "overflow: auto" >
@@ -52,21 +104,32 @@
             </div>
           </div> -->
           <q-scroll-area style="height: 230px; max-width: 500px">
-            <div class="row no-wrap">
-            <div style="width: 150px" class="q-pa-sm" v-for="hour in weatherHourly" :key="hour.dt">
-              <div class="col-4"><img width="75" height="75" :src="`http://openweathermap.org/img/wn/${ hour.weather[0].icon }@2x.png`"></div>
-              <div class="col">
-                <div class="row text-h5">{{formatHour(hour.dt)}}</div>
-                <div class="row">
-                  <span>{{ Math.round(hour.temp - 273.15) }}</span>
-                  <span class="text-h6 relative-position">&deg;C</span>
+            <div class="row no-wrap text-yellow">
+              <div
+                style="width: 128px"
+                class="q-pa-sm"
+                v-for="hour in weatherHourly"
+                :key="hour.dt"
+              >
+                <div class="col-4">
+                  <img
+                    width="75"
+                    height="75"
+                    :src="`http://openweathermap.org/img/wn/${hour.weather[0].icon}@2x.png`"
+                  />
+                </div>
+                <div class="col">
+                  <div class="row text-h5">{{ formatHour(hour.dt) }}</div>
+                  <div class="row">
+                    <span>{{ Math.round(hour.temp - 273.15) }}</span>
+                    <span class="text-h6 relative-position">&deg;C</span>
+                  </div>
                 </div>
               </div>
             </div>
-            </div>
           </q-scroll-area>
         </div>
-        <div class="col-4 text-white">
+        <div class="col-4 text-yellow">
           <div
             class="text-h3 text-weight-thin q-my-lq relative-position row"
             v-for="day in weatherDailys"
@@ -89,11 +152,11 @@
           </div>
         </div>
       </div>
-      <div class="col skyline"></div>
+      <div class="col"></div>
     </template>
 
     <template v-else>
-      <div class="col column text-center text-white">
+      <div class="col column text-center text-yellow">
         <div class="col text-h2 text-weight-thin">Weather<br />App</div>
       </div>
       <q-btn @click="getLocation" class="col" flat>
@@ -106,11 +169,18 @@
 
 <script>
 import { defineComponent } from "vue";
+import { ref } from "vue";
 import { api } from "boot/axios";
 import moment from "moment";
 
 export default defineComponent({
   name: "PageIndex",
+  setup() {
+    return {
+      carousel: ref(false),
+      slide: ref(1),
+    };
+  },
   data() {
     return {
       search: "",
@@ -127,10 +197,64 @@ export default defineComponent({
   computed: {
     bgClass() {
       if (this.weatherData) {
-        if (this.weatherData.weather[0].icon.endsWith("n")) {
-          return "bg-night";
-        } else {
-          return "bg-day";
+        switch (this.weatherData.weather[0].icon) {
+          case "01d":
+            return "bg-day";
+            break;
+          case "01n":
+            return "bg-night";
+            break;
+          case "02d":
+            return "bg-cloud";
+            break;
+          case "02n":
+            return "bg-cloud1";
+            break;
+          case "03d":
+            return "bg-fewcloud";
+            break;
+          case "03n":
+            return "bg-fewcloud1";
+            break;
+          case "04d":
+            return "bg-brokencloud";
+            break;
+          case "04n":
+            return "bg-brokencloud1";
+            break;
+          case "09d":
+            return "bg-rain";
+            break;
+          case "09n":
+            return "bg-rain1";
+            break;
+          case "10d":
+            return "bg-lightrain";
+            break;
+          case "10n":
+            return "bg-ligthrain1";
+            break;
+          case "11d":
+            return "bg-thunder";
+            break;
+          case "11n":
+            return "bg-thunder1";
+            break;
+          case "13d":
+            return "bg-snow";
+            break;
+          case "13n":
+            return "bg-snow1";
+            break;
+          case "50d":
+            return "bg-mist";
+            break;
+          case "50n":
+            return "bg-mist1";
+            break;
+          default:
+            return "bg-day";
+            break;
         }
       } else return "bg-day";
     },
@@ -138,7 +262,6 @@ export default defineComponent({
   methods: {
     getLocation() {
       this.$q.loading.show();
-
       if (this.$q.platform.is.electron) {
         api.get("https://freegeoip.app/json/").then((response) => {
           this.lat = response.data.latitude;
@@ -201,6 +324,7 @@ export default defineComponent({
           // this.$q.loading.hide()
           latitude = response.data.coord.lat;
           longitude = response.data.coord.lon;
+          console.log(response.data);
         });
       this.getDaily(latitude, longitude);
       this.getHourly(latitude, longitude);
@@ -234,9 +358,113 @@ export default defineComponent({
 .q-page
   background: linear-gradient(to bottom,#136a8a,#267871)
   &.bg-night
-    background: linear-gradient(to bottom,#232526, #414345)
+    background: url(/Clear1.jpg)
+    height: 100%
+    background-position: center
+    background-repeat: no-repeat
+    background-size: cover
   &.bg-day
-    background: linear-gradient(to bottom,#00b4db, #0083b0)
+    background: url(/Clear.jpg)
+    height: 100%
+    background-position: center
+    background-repeat: no-repeat
+    background-size: cover
+  &.bg-cloud
+    background: url(/Cloud.jpg)
+    height: 100%
+    background-position: center
+    background-repeat: no-repeat
+    background-size: cover
+  &.bg-cloud1
+    background: url(/Cloud1.jpg)
+    height: 100%
+    background-position: center
+    background-repeat: no-repeat
+    background-size: cover
+  &.bg-fewcloud
+    background: url(/FewCloud.jpg)
+    height: 100%
+    background-position: center
+    background-repeat: no-repeat
+    background-size: cover
+  &.bg-fewcloud1
+    background: url(/FewCloud1.jpg)
+    height: 100%
+    background-position: center
+    background-repeat: no-repeat
+    background-size: cover
+  &.bg-brokencloud
+    background: url(/Brokencloud.jpg)
+    height: 100%
+    background-position: center
+    background-repeat: no-repeat
+    background-size: cover
+  &.bg-brokencloud1
+    background: url(/Brokencloud1.jpg)
+    height: 100%
+    background-position: center
+    background-repeat: no-repeat
+    background-size: cover
+  &.bg-rain
+    background: url(/Rain.jpg)
+    height: 100%
+    background-position: center
+    background-repeat: no-repeat
+    background-size: cover
+  &.bg-rain1
+    background: url(/Rain1.jpg)
+    height: 100%
+    background-position: center
+    background-repeat: no-repeat
+    background-size: cover
+  &.bg-lightrain
+    background: url(/Lightrain.jpg)
+    height: 100%
+    background-position: center
+    background-repeat: no-repeat
+    background-size: cover
+  &.bg-lightrain1
+    background: url(/Lightrain1.jpg)
+    height: 100%
+    background-position: center
+    background-repeat: no-repeat
+    background-size: cover
+  &.bg-thunder
+    background: url(/Thunder.jpg)
+    height: 100%
+    background-position: center
+    background-repeat: no-repeat
+    background-size: cover
+  &.bg-thunder1
+    background: url(/Thunder1.jpg)
+    height: 100%
+    background-position: center
+    background-repeat: no-repeat
+    background-size: cover
+  &.bg-snow
+    background: url(/Snow.jpg)
+    height: 100%
+    background-position: center
+    background-repeat: no-repeat
+    background-size: cover
+  &.bg-snow1
+    background: url(/Snow1.jpg)
+    height: 100%
+    background-position: center
+    background-repeat: no-repeat
+    background-size: cover
+  &.bg-mist
+    background: url(/Mist.jpg)
+    height: 100%
+    background-position: center
+    background-repeat: no-repeat
+    background-size: cover
+  &.bg-mist1
+    background: url(/Mist1.jpg)
+    height: 100%
+    background-position: center
+    background-repeat: no-repeat
+    background-size: cover
 .degree
   top: -50px
 .skyline
