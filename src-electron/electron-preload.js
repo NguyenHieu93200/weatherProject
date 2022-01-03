@@ -15,3 +15,13 @@
  *     doAThing: () => {}
  *   })
  */
+
+ import { contextBridge } from 'electron'
+
+ const fs = require('fs')
+ contextBridge.exposeInMainWorld('electronFs', {
+   readFileSync: fs.readFileSync,
+   existsSync: fs.existsSync,
+   writeFileSync: fs.writeFileSync
+   // Other fs methods here
+ })
