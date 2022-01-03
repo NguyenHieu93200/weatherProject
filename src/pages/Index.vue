@@ -70,31 +70,33 @@
                   <q-carousel-slide
                     :name="1"
                     class="column no-wrap flex-center"
+                    style="width:500px"
                   >
-                    <q-icon name="style" color="primary" size="56px" />
+                    
+                    <q-icon class="fas fa-wind" color="primary" size="56px"></q-icon>
                     <div class="q-mt-md text-center">Wind speed: {{ weatherData.wind.speed }} m/s</div>
                     <div class="q-mt-md text-center">Wind gust: {{ weatherData.wind.gust }} m/s</div>
                     <div class="q-mt-md text-center">Wind degree: {{ weatherData.wind.deg }} degree direction</div>
                   </q-carousel-slide>
                   <q-carousel-slide
                     :name="2"
-                    class="column no-wrap flex-center"
+                    class="column no-wrap flex-center" style="width:500px"
                   >
-                    <q-icon name="live_tv" color="primary" size="56px" />
+                    <q-icon class="fas fa-tint" color="primary" size="56px"></q-icon>
                     <div class="q-mt-md text-center">Humidity: {{ weatherData.main.humidity }} %</div>
                   </q-carousel-slide>
                   <q-carousel-slide
                     :name="3"
-                    class="column no-wrap flex-center"
+                    class="column no-wrap flex-center" style="width:500px"
                   >
-                    <q-icon name="layers" color="primary" size="56px" />
+                    <q-icon class="fas fa-toggle-on" color="primary" size="56px"></q-icon>
                     <div class="q-mt-md text-center">Status: {{ weatherData.weather[0].description }} </div>
                   </q-carousel-slide>
                   <q-carousel-slide
                     :name="4"
-                    class="column no-wrap flex-center"
+                    class="column no-wrap flex-center" style="width:500px"
                   >
-                    <q-icon name="terrain" color="primary" size="56px" />
+                    <q-icon class="fas fa-water" color="primary" size="56px"></q-icon>
                     <div class="q-mt-md text-center">Sea level: {{ weatherData.main.sea_level }} </div>
                   </q-carousel-slide>
                 </q-carousel>
