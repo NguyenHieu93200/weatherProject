@@ -12,8 +12,11 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "axios": "^0.21.1",
+    "cities.json": "^1.1.5",
     "core-js": "^3.6.5",
+    "fs": "^0.0.1-security",
     "moment": "^2.29.1",
+    "path": "^0.12.7",
     "quasar": "^2.0.0",
     "vue-i18n": "^9.0.0",
     "vuex": "^4.0.1"

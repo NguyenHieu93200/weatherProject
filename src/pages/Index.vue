@@ -1,12 +1,15 @@
 <template>
   <q-page class="flex column" :class="bgClass">
     <div class="col q-pt-lg q-px-md" style="max-height: 100px">
-      <q-input
+      <q-select
         v-model="search"
         @keyup.enter="getWeatherBySearch"
         label="Search"
         dark
         borderless
+        use-input
+        :options="options"
+        @filter="filterFn"
       >
         <template v-slot:prepend>
           <q-icon @click="getLocation" name="my_location" />
@@ -14,7 +17,14 @@
         <template v-slot:append>
           <q-btn @click="getWeatherBySearch" round dense flat icon="search" />
         </template>
-      </q-input>
+        <template v-slot:no-option>
+          <q-item>
+            <q-item-section class="text-grey">
+              No results
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
     </div>
 
     <template v-if="weatherData">
@@ -91,18 +101,6 @@
               </q-dialog>
             </div>
           </div>
-          <!-- <div class = "col row text-white" style = "overflow: auto" >
-            <div class="text-h3 text-weight-thin q-my-lq relative-position row" v-for="hour in weatherHourly" :key="hour.dt">
-              <div class="col-4"><img width="75" height="75" :src="`http://openweathermap.org/img/wn/${ hour.weather[0].icon }@2x.png`"></div>
-              <div class="col">
-                <div class="row text-h5">{{formatHour(hour.dt)}}</div>
-                <div class="row">
-                  <span>{{ Math.round(hour.temp - 273.15) }}</span>
-                  <span class="text-h6 relative-position">&deg;C</span>
-                </div>
-              </div>
-            </div>
-          </div> -->
           <q-scroll-area style="height: 230px; max-width: 500px">
             <div class="row no-wrap text-yellow">
               <div
@@ -172,6 +170,7 @@ import { defineComponent } from "vue";
 import { ref } from "vue";
 import { api } from "boot/axios";
 import moment from "moment";
+import cities from 'cities.json';
 
 export default defineComponent({
   name: "PageIndex",
@@ -183,7 +182,7 @@ export default defineComponent({
   },
   data() {
     return {
-      search: "",
+      search: null,
       weatherData: null,
       weatherDailys: null,
       weatherHourly: null,
@@ -192,7 +191,9 @@ export default defineComponent({
       apiUrl: "https://api.openweathermap.org/data/2.5/weather?",
       apiUrl2: "https://api.openweathermap.org/data/2.5/onecall?",
       apiKey: "406f101ee5301278cd0a98ef50706a37",
-    };
+      errors: [],
+      options: [],
+      }
   },
   computed: {
     bgClass() {
@@ -260,13 +261,36 @@ export default defineComponent({
     },
   },
   methods: {
+    filterFn (val, update) {
+      if (val === '') {
+        update(() => {
+          this.options = []
+        })
+        return
+      }
+
+      update(() => {
+        const needle = val.toLowerCase()
+        var count = 0;
+        const options = cities.filter(element => element.name.toLowerCase().includes(needle))
+        this.options = []
+        while(count < 5){
+          this.options.push(options[count].name)
+          count += 1
+        }
+      })
+    },
     getLocation() {
       this.$q.loading.show();
       if (this.$q.platform.is.electron) {
-        api.get("https://freegeoip.app/json/").then((response) => {
+        api.get("https://freegeoip.app/json/")
+        .then((response) => {
           this.lat = response.data.latitude;
           this.lon = response.data.longitude;
           this.getWeatherByCoords();
+        })
+        .catch(e => {
+          this.$q.notify("can't find place")
         });
       } else {
         navigator.geolocation.getCurrentPosition((response) => {
@@ -283,8 +307,11 @@ export default defineComponent({
           `${this.apiUrl}lat=${this.lat}&lon=${this.lon}&appid=${this.apiKey}&units=metric`
         )
         .then((response) => {
-          console.log(response.data);
           this.weatherData = response.data;
+          this.saveFile(response.data)
+        })
+        .catch(e => {
+          this.$q.notify("can't find place 1")
         });
 
       this.getDaily(this.lat, this.lon);
@@ -297,9 +324,9 @@ export default defineComponent({
         )
         .then((response) => {
           this.weatherDailys = response.data.daily;
-          // console.log(this.lat, this.lon)
-          console.log(this.weatherDaily);
-          // this.$q.loading.hide()
+        })
+        .catch(e => {
+           this.$q.notify("can't find place")
         });
     },
     getHourly(lat, lon) {
@@ -311,6 +338,9 @@ export default defineComponent({
           this.weatherHourly = response.data.hourly;
           this.weatherHourly.splice(12, 36);
           this.$q.loading.hide();
+        })
+        .catch(e => {
+          this.$q.notify("can't find place")
         });
     },
     async getWeatherBySearch() {
@@ -324,7 +354,9 @@ export default defineComponent({
           // this.$q.loading.hide()
           latitude = response.data.coord.lat;
           longitude = response.data.coord.lon;
-          console.log(response.data);
+        })
+        .catch(e => {
+          this.$q.notify("can't find place")
         });
       this.getDaily(latitude, longitude);
       this.getHourly(latitude, longitude);
@@ -350,6 +382,13 @@ export default defineComponent({
       let myDay = moment(myDate, "x").format("hh:mm A DD/MM");
       return myDay;
     },
+    // update file json
+    saveFile: function(val) {
+      const data = JSON.stringify(val)
+      var fs = window.electronFs
+      try { fs.writeFileSync('test.json', data, 'utf-8'); }
+      catch(e) { alert('Failed to save the file !'); }
+    }
   },
 });
 </script>
