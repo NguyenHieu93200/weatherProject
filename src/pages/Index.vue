@@ -122,7 +122,7 @@
                   <div class="row text-h5">{{ formatHour(hour.dt) }}</div>
                   <div class="row">
                     <span>{{ Math.round(hour.temp - 273.15) }}</span>
-                    <span class="text-h6 relative-position">&deg;C</span>
+                    <span class="text-h6 relative-position">&deg;C</span> 
                   </div>
                 </div>
               </div>
@@ -284,22 +284,33 @@ export default defineComponent({
     },
     getLocation() {
       this.$q.loading.show();
-      if (this.$q.platform.is.electron) {
-        api.get("https://freegeoip.app/json/")
-        .then((response) => {
-          this.lat = response.data.latitude;
-          this.lon = response.data.longitude;
-          this.getWeatherByCoords();
-        })
-        .catch(e => {
-          this.$q.notify("can't find place")
-        });
-      } else {
-        navigator.geolocation.getCurrentPosition((response) => {
-          this.lat = response.coords.latitude;
-          this.lon = response.coords.longitude;
-          this.getWeatherByCoords();
-        });
+      if(window.navigator.onLine){
+        if (this.$q.platform.is.electron) {
+          api.get("https://freegeoip.app/json/")
+          .then((response) => {
+            this.lat = response.data.latitude;
+            this.lon = response.data.longitude;
+            this.getWeatherByCoords();
+          })
+          .catch(e => {
+            this.$q.notify("can't find place")
+          });
+        } else {
+          navigator.geolocation.getCurrentPosition((response) => {
+            this.lat = response.coords.latitude;
+            this.lon = response.coords.longitude;
+            this.getWeatherByCoords();
+          });
+        }
+      } else{
+        var fs = window.electronFs
+        try { 
+            alert('No internet connection'); 
+            this.weatherData = JSON.parse(fs.readFileSync('current.json',{encoding: 'utf8', flag:'r'}));
+            this.weatherDailys = JSON.parse(fs.readFileSync('daily.json',{encoding: 'utf8', flag:'r'}));
+            this.weatherHourly = JSON.parse(fs.readFileSync('hourly.json',{encoding: 'utf8', flag:'r'}));
+        }
+        catch(e) { alert('Failed to read the file !'); }
       }
     },
     async getWeatherByCoords() {
@@ -310,28 +321,31 @@ export default defineComponent({
         )
         .then((response) => {
           this.weatherData = response.data;
-          this.saveFile(response.data)
+          this.saveFile(response.data,1)
         })
         .catch(e => {
           this.$q.notify("can't find place 1")
         });
 
-      this.getDaily(this.lat, this.lon);
-      this.getHourly(this.lat, this.lon);
+      this.getDaily(this.lat, this.lon, true);
+      this.getHourly(this.lat, this.lon, true);
     },
-    getDaily(lat, lon) {
+    getDaily(lat, lon, checkCurrent) {
       api
         .get(
           `${this.apiUrl2}lat=${lat}&lon=${lon}&exclude=current,minutely,hourly&appid=${this.apiKey}`
         )
         .then((response) => {
           this.weatherDailys = response.data.daily;
+          if (checkCurrent) {
+            this.saveFile(response.data,2)
+          }
         })
         .catch(e => {
            this.$q.notify("can't find place")
         });
     },
-    getHourly(lat, lon) {
+    getHourly(lat, lon,checkCurrent) {
       api
         .get(
           `${this.apiUrl2}lat=${lat}&lon=${lon}&exclude=current,minutely,daily&appid=${this.apiKey}`
@@ -340,6 +354,9 @@ export default defineComponent({
           this.weatherHourly = response.data.hourly;
           this.weatherHourly.splice(12, 36);
           this.$q.loading.hide();
+          if (checkCurrent) {
+            this.saveFile(response.data,3)
+          }
         })
         .catch(e => {
           this.$q.notify("can't find place")
@@ -385,10 +402,18 @@ export default defineComponent({
       return myDay;
     },
     // update file json
-    saveFile: function(val) {
+    saveFile: function(val, file) {
+      console.log(val)
       const data = JSON.stringify(val)
+      console.log(data)
       var fs = window.electronFs
-      try { fs.writeFileSync('test.json', data, 'utf-8'); }
+      try { 
+        switch(file){
+          case 1: fs.writeFileSync('current.json', data, 'utf-8'); break;
+          case 2: fs.writeFileSync('daily.json', data, 'utf-8'); break;
+          case 3: fs.writeFileSync('hourly.json', data, 'utf-8'); break;
+        }
+      }
       catch(e) { alert('Failed to save the file !'); }
     }
   },
