@@ -19,9 +19,7 @@
         </template>
         <template v-slot:no-option>
           <q-item>
-            <q-item-section class="text-grey">
-              No results
-            </q-item-section>
+            <q-item-section class="text-grey"> No results </q-item-section>
           </q-item>
         </template>
       </q-select>
@@ -30,8 +28,8 @@
     <template v-if="weatherData">
       <div class="row">
         <div class="col-8 column">
-          <div class="col-8">
-            <div class="col text-yellow text-center">
+          <div class="col-7">
+            <div class="col text-red text-center">
               <div class="text-h4 text-weight-light">
                 {{ weatherData.name }}
               </div>
@@ -42,14 +40,12 @@
                 <span>{{ Math.round(weatherData.main.temp) }}</span>
                 <span class="text-h4 relative-position degree">&deg;C</span>
               </div>
-              
             </div>
 
             <div class="col text-center">
               <img
                 :src="`http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`"
               />
-              
             </div>
             <div class="col text-center">
               <q-btn label="Detail" color="primary" @click="carousel = true" />
@@ -70,66 +66,107 @@
                   <q-carousel-slide
                     :name="1"
                     class="column no-wrap flex-center"
-                    style="width:500px"
+                    style="width: 500px"
                   >
-                    
-                    <q-icon class="fas fa-wind" color="primary" size="56px"></q-icon>
-                    <div class="q-mt-md text-center">Wind speed: {{ weatherData.wind.speed }} m/s</div>
-                    <div class="q-mt-md text-center">Wind gust: {{ weatherData.wind.gust }} m/s</div>
-                    <div class="q-mt-md text-center">Wind degree: {{ weatherData.wind.deg }} degree direction</div>
+                    <q-icon
+                      class="fas fa-wind"
+                      color="primary"
+                      size="56px"
+                    ></q-icon>
+                    <div class="q-mt-md text-center">
+                      Wind speed: {{ weatherData.wind.speed }} m/s
+                    </div>
+                    <div class="q-mt-md text-center">
+                      Wind gust: {{ weatherData.wind.gust }} m/s
+                    </div>
+                    <div class="q-mt-md text-center">
+                      Wind degree: {{ weatherData.wind.deg }} degree direction
+                    </div>
                   </q-carousel-slide>
                   <q-carousel-slide
                     :name="2"
-                    class="column no-wrap flex-center" style="width:500px"
+                    class="column no-wrap flex-center"
+                    style="width: 500px"
                   >
-                    <q-icon class="fas fa-tint" color="primary" size="56px"></q-icon>
-                    <div class="q-mt-md text-center">Humidity: {{ weatherData.main.humidity }} %</div>
+                    <q-icon
+                      class="fas fa-tint"
+                      color="primary"
+                      size="56px"
+                    ></q-icon>
+                    <div class="q-mt-md text-center">
+                      Humidity: {{ weatherData.main.humidity }} %
+                    </div>
                   </q-carousel-slide>
                   <q-carousel-slide
                     :name="3"
-                    class="column no-wrap flex-center" style="width:500px"
+                    class="column no-wrap flex-center"
+                    style="width: 500px"
                   >
-                    <q-icon class="fas fa-toggle-on" color="primary" size="56px"></q-icon>
-                    <div class="q-mt-md text-center">Status: {{ weatherData.weather[0].description }} </div>
+                    <q-icon
+                      class="fas fa-toggle-on"
+                      color="primary"
+                      size="56px"
+                    ></q-icon>
+                    <div class="q-mt-md text-center">
+                      Status: {{ weatherData.weather[0].description }}
+                    </div>
                   </q-carousel-slide>
                   <q-carousel-slide
                     :name="4"
-                    class="column no-wrap flex-center" style="width:500px"
+                    class="column no-wrap flex-center"
+                    style="width: 500px"
                   >
-                    <q-icon class="fas fa-water" color="primary" size="56px"></q-icon>
-                    <div class="q-mt-md text-center">Sea level: {{ weatherData.main.sea_level }} </div>
+                    <q-icon
+                      class="fas fa-water"
+                      color="primary"
+                      size="56px"
+                    ></q-icon>
+                    <div class="q-mt-md text-center">
+                      Sea level: {{ weatherData.main.sea_level }}
+                    </div>
                   </q-carousel-slide>
                 </q-carousel>
               </q-dialog>
             </div>
-          </div>
-          <q-scroll-area style="height: 230px; max-width: 500px">
-            <div class="row no-wrap text-yellow">
-              <div
-                style="width: 128px"
-                class="q-pa-sm"
-                v-for="hour in weatherHourly"
-                :key="hour.dt"
-              >
-                <div class="col-4">
-                  <img
-                    width="75"
-                    height="75"
-                    :src="`http://openweathermap.org/img/wn/${hour.weather[0].icon}@2x.png`"
-                  />
-                </div>
-                <div class="col">
-                  <div class="row text-h5">{{ formatHour(hour.dt) }}</div>
-                  <div class="row">
-                    <span>{{ Math.round(hour.temp - 273.15) }}</span>
-                    <span class="text-h6 relative-position">&deg;C</span>
+            <q-scroll-area style="height: 230px; max-width: 1100px">
+              <div class="row no-wrap text-red">
+                <div
+                  style="width: 128px"
+                  class="q-pa-sm"
+                  v-for="hour in weatherHourly"
+                  :key="hour.dt"
+                >
+                  <div class="col-4">
+                    <img
+                      width="75"
+                      height="75"
+                      :src="`http://openweathermap.org/img/wn/${hour.weather[0].icon}@2x.png`"
+                    />
+                  </div>
+                  <div class="col">
+                    <div class="row text-h5">{{ formatHour(hour.dt) }}</div>
+                    <div class="row">
+                      <span>{{ Math.round(hour.temp - 273.15) }}</span>
+                      <span class="text-h6 relative-position">&deg;C</span>
+                    </div>
                   </div>
                 </div>
               </div>
+            </q-scroll-area>
+          </div>
+
+          <div class="col-1">
+            <div id="chart">
+              <apexchart
+                type='line'
+                height="350"
+                :options="chartOptions"
+                :series="series"
+              ></apexchart>
             </div>
-          </q-scroll-area>
+          </div>
         </div>
-        <div class="col-4 text-yellow">
+        <div class="col-4 text-red">
           <div
             class="text-h3 text-weight-thin q-my-lq relative-position row"
             v-for="day in weatherDailys"
@@ -143,7 +180,7 @@
               />
             </div>
             <div class="col">
-              <div class="row text-h5">{{ dayFullName(day.dt) }}</div>
+              <div class="row text-h5">{{ dayWeekName(day.dt) }}</div>
               <div class="row">
                 <span>{{ Math.round(day.temp.eve - 273.15) }}</span>
                 <span class="text-h6 relative-position">&deg;C</span>
@@ -172,10 +209,14 @@ import { defineComponent } from "vue";
 import { ref } from "vue";
 import { api } from "boot/axios";
 import moment from "moment";
-import cities from 'cities.json';
+import cities from "cities.json";
+import VueApexCharts from "vue3-apexcharts";
 
 export default defineComponent({
   name: "PageIndex",
+  components: {
+    apexchart: VueApexCharts,
+  },
   setup() {
     return {
       carousel: ref(false),
@@ -195,7 +236,133 @@ export default defineComponent({
       apiKey: "406f101ee5301278cd0a98ef50706a37",
       errors: [],
       options: [],
-      }
+      series: [
+        {
+          name: "Temparature",
+          type: "column",
+          data: [],
+        },
+        {
+          name: "Wind",
+          type: "column",
+          data: [],
+        },
+        {
+          name: "Humidity",
+          type: "line",
+          data: [],
+        },
+      ],
+      chartOptions: {
+        chart: {
+          type: "line",
+          height: 350,
+          stacked: false,
+        },
+        // plotOptions: {
+        //   bar: {
+        //     horizontal: false,
+        //     columnWidth: "55%",
+        //     endingShape: "rounded",
+        //   },
+        // },
+        title: {
+          text: "Graph",
+          align: "left",
+          offsetX: 110,
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        stroke: {
+          width: [1, 1, 4],
+        },
+        xaxis: {
+          categories: [],
+        },
+        yaxis: [
+          {
+            axisTicks: {
+              show: true,
+            },
+            axisBorder: {
+              show: true,
+              color: "#008FFB",
+            },
+            labels: {
+              style: {
+                colors: "#008FFB",
+              },
+            },
+            title: {
+              text: "Temperature (°C)",
+              style: {
+                color: "#008FFB",
+              },
+            },
+            tooltip: {
+              enabled: true,
+            },
+          },
+          {
+            seriesName: "Wind Speed",
+            opposite: true,
+            axisTicks: {
+              show: true,
+            },
+            axisBorder: {
+              show: true,
+              color: "#00E396",
+            },
+            labels: {
+              style: {
+                colors: "#00E396",
+              },
+            },
+            title: {
+              text: "Wind Speed (m/s)",
+              style: {
+                color: "#00E396",
+              },
+            },
+          },
+          {
+            seriesName: "Humidity",
+            opposite: true,
+            axisTicks: {
+              show: true,
+            },
+            axisBorder: {
+              show: true,
+              color: "#FEB019",
+            },
+            labels: {
+              style: {
+                colors: "#FEB019",
+              },
+            },
+            title: {
+              text: "Humidity (%)",
+              style: {
+                color: "#FEB019",
+              },
+            },
+          },
+        ],
+        tooltip: {
+          fixed: {
+            enabled: true,
+            position: "topLeft", // topRight, topLeft, bottomRight, bottomLeft
+            offsetY: 30,
+            offsetX: 60,
+          },
+        },
+        legend: {
+          horizontalAlign: "left",
+          offsetX: 40,
+        },
+      },
+    };
   },
   computed: {
     bgClass() {
@@ -263,37 +430,40 @@ export default defineComponent({
     },
   },
   methods: {
-    filterFn (val, update) {
-      if (val === '') {
+    filterFn(val, update) {
+      if (val === "") {
         update(() => {
-          this.options = []
-        })
-        return
+          this.options = [];
+        });
+        return;
       }
 
       update(() => {
-        const needle = val.toLowerCase()
+        const needle = val.toLowerCase();
         var count = 0;
-        const options = cities.filter(element => element.name.toLowerCase().includes(needle))
-        this.options = []
-        while(count < 5){
-          this.options.push(options[count].name)
-          count += 1
+        const options = cities.filter((element) =>
+          element.name.toLowerCase().includes(needle)
+        );
+        this.options = [];
+        while (count < 5) {
+          this.options.push(options[count].name);
+          count += 1;
         }
-      })
+      });
     },
     getLocation() {
       this.$q.loading.show();
       if (this.$q.platform.is.electron) {
-        api.get("https://freegeoip.app/json/")
-        .then((response) => {
-          this.lat = response.data.latitude;
-          this.lon = response.data.longitude;
-          this.getWeatherByCoords();
-        })
-        .catch(e => {
-          this.$q.notify("can't find place")
-        });
+        api
+          .get("https://freegeoip.app/json/")
+          .then((response) => {
+            this.lat = response.data.latitude;
+            this.lon = response.data.longitude;
+            this.getWeatherByCoords();
+          })
+          .catch((e) => {
+            this.$q.notify("can't find place");
+          });
       } else {
         navigator.geolocation.getCurrentPosition((response) => {
           this.lat = response.coords.latitude;
@@ -310,25 +480,28 @@ export default defineComponent({
         )
         .then((response) => {
           this.weatherData = response.data;
-          this.saveFile(response.data)
+          this.saveFile(response.data);
         })
-        .catch(e => {
-          this.$q.notify("can't find place 1")
+        .catch((e) => {
+          this.$q.notify("can't find place 1");
         });
 
       this.getDaily(this.lat, this.lon);
       this.getHourly(this.lat, this.lon);
     },
     getDaily(lat, lon) {
+      this.$q.loading.show();
       api
         .get(
           `${this.apiUrl2}lat=${lat}&lon=${lon}&exclude=current,minutely,hourly&appid=${this.apiKey}`
         )
         .then((response) => {
           this.weatherDailys = response.data.daily;
+          console.log(this.weatherDailys);
+          this.tableInfo();
         })
-        .catch(e => {
-           this.$q.notify("can't find place")
+        .catch((e) => {
+          this.$q.notify("can't find place");
         });
     },
     getHourly(lat, lon) {
@@ -341,8 +514,8 @@ export default defineComponent({
           this.weatherHourly.splice(12, 36);
           this.$q.loading.hide();
         })
-        .catch(e => {
-          this.$q.notify("can't find place")
+        .catch((e) => {
+          this.$q.notify("can't find place");
         });
     },
     async getWeatherBySearch() {
@@ -357,11 +530,65 @@ export default defineComponent({
           latitude = response.data.coord.lat;
           longitude = response.data.coord.lon;
         })
-        .catch(e => {
-          this.$q.notify("can't find place")
+        .catch((e) => {
+          this.$q.notify("can't find place");
         });
       this.getDaily(latitude, longitude);
       this.getHourly(latitude, longitude);
+    },
+    tableInfo() {
+      let change = this;
+      let day = this.chartOptions.xaxis.categories.map(() => {});
+      let temp = this.series[0].data.map(() => {});
+      let wind = this.series[1].data.map(() => {});
+      let humid = this.series[2].data.map(() => {});
+
+      
+      this.weatherDailys.forEach(function (daily) {
+        day.push(change.dayWeekName(daily.dt));
+      });
+      this.updateCol(day)
+      // this.chartOptions = {
+      //   ...this.chartOptions,
+      //   ...{
+      //     xaxis: {
+      //       categories: day,
+      //     },
+      //   },  
+      // };
+      console.log(day);
+      this.weatherDailys.forEach(function (daily) {
+        temp.push(Math.round(daily.temp.eve - 273.15));
+      });
+      this.weatherDailys.forEach(function (daily) {
+        wind.push(daily.wind_speed);
+      });
+      this.weatherDailys.forEach(function (daily) {
+        humid.push(daily.humidity);
+      });
+      // Math.round(day.temp.eve - 273.15)
+      this.series = [
+        {
+          data: temp,
+        },
+        {
+          data: wind,
+        },
+        {
+          data: humid,
+        },
+      ];
+    },
+    updateCol(day){
+      this.chartOptions = {
+        ...this.chartOptions,
+        ...{
+          xaxis: {
+            categories: day
+          },
+        },  
+      };
+      console.log(this.chartOptions)
     },
     weekDate(value) {
       const entireWeek =
@@ -372,6 +599,11 @@ export default defineComponent({
     dayFullName(date) {
       let myDate = new Date(date * 1000);
       let myDay = moment(myDate, "x").format("dddd DD/MM");
+      return myDay;
+    },
+    dayWeekName(date) {
+      let myDate = new Date(date * 1000);
+      let myDay = moment(myDate, "x").format("ddd");
       return myDay;
     },
     format_date(value) {
@@ -385,12 +617,15 @@ export default defineComponent({
       return myDay;
     },
     // update file json
-    saveFile: function(val) {
-      const data = JSON.stringify(val)
-      var fs = window.electronFs
-      try { fs.writeFileSync('test.json', data, 'utf-8'); }
-      catch(e) { alert('Failed to save the file !'); }
-    }
+    saveFile: function (val) {
+      const data = JSON.stringify(val);
+      var fs = window.electronFs;
+      try {
+        fs.writeFileSync("test.json", data, "utf-8");
+      } catch (e) {
+        alert("Failed to save the file !");
+      }
+    },
   },
 });
 </script>
