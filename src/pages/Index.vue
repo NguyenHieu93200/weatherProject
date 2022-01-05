@@ -1,21 +1,16 @@
 <template>
   <q-page class="flex column" :class="bgClass">
     <div class="col q-pt-lg q-px-md" style="max-height: 100px">
-      <q-select
-        v-model="search"
-        @keyup.enter="getWeatherBySearch"
-        label="Search"
-        dark
-        borderless
-        use-input
-        :options="options"
-        @filter="filterFn"
+      <q-input
+        v-model="search" @keyup.enter="getWeatherBySearch"
       >
-        <template v-slot:prepend>
-          <q-icon @click="getLocation" name="my_location" />
-        </template>
         <template v-slot:append>
           <q-btn @click="getWeatherBySearch" round dense flat icon="search" />
+        </template>
+      </q-input>
+      <q-select v-model="search" dark borderless use-input :options="options" @filter="filterFn">
+        <template v-slot:prepend>
+          <q-icon @click="getLocation" name="my_location" />
         </template>
         <template v-slot:no-option>
           <q-item>
@@ -272,7 +267,7 @@ export default defineComponent({
       }
 
       update(() => {
-        const needle = val.toLowerCase()
+        const needle = val.toLocaleLowerCase()
         var count = 0;
         const options = cities.filter(element => element.name.toLowerCase().includes(needle))
         this.options = []
@@ -363,6 +358,7 @@ export default defineComponent({
         });
     },
     async getWeatherBySearch() {
+      console.log(this.search)
       let latitude = 0;
       let longitude = 0;
       this.$q.loading.show();
