@@ -115,7 +115,7 @@
                   <img
                     width="75"
                     height="75"
-                    :src="`http://openweathermap.org/img/wn/${hour.weather[0].icon}@2x.png`"
+                    :src="`icons/${hour.weather[0].icon}@2x.png`"
                   />
                 </div>
                 <div class="col">
