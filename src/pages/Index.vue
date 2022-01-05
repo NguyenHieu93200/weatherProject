@@ -1,14 +1,19 @@
 <template>
   <q-page class="flex column" :class="bgClass">
     <div class="col q-pt-lg q-px-md" style="max-height: 100px">
-      <q-input
-        v-model="search" @keyup.enter="getWeatherBySearch"
-      >
+      <q-input v-model="search" @keyup.enter="getWeatherBySearch">
         <template v-slot:append>
           <q-btn @click="getWeatherBySearch" round dense flat icon="search" />
         </template>
       </q-input>
-      <q-select v-model="search" dark borderless use-input :options="options" @filter="filterFn">
+      <q-select
+        v-model="search"
+        dark
+        borderless
+        use-input
+        :options="options"
+        @filter="filterFn"
+      >
         <template v-slot:prepend>
           <q-icon @click="getLocation" name="my_location" />
         </template>
@@ -35,124 +40,128 @@
                 <span>{{ Math.round(weatherData.main.temp) }}</span>
                 <span class="text-h4 relative-position degree">&deg;C</span>
               </div>
-            </div>
-
-            <div class="col text-center">
-              <img
-                :src="`http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`"
-              />
-            </div>
-            <div class="col text-center">
-              <q-btn label="Detail" color="primary" @click="carousel = true" />
-              <q-dialog v-model="carousel">
-                <q-carousel
-                  transition-prev="slide-right"
-                  transition-next="slide-left"
-                  swipeable
-                  animated
-                  v-model="slide"
-                  control-color="primary"
-                  navigation-icon="radio_button_unchecked"
-                  navigation
-                  padding
-                  height="200px"
-                  class="bg-white shadow-1 rounded-borders"
-                >
-                  <q-carousel-slide
-                    :name="1"
-                    class="column no-wrap flex-center"
-                    style="width: 500px"
+              <div class="col text-center">
+                <img
+                  :src="`http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`"
+                />
+              </div>
+              <div class="col text-center">
+                <q-btn
+                  label="Detail"
+                  color="primary"
+                  @click="carousel = true"
+                />
+                <q-dialog v-model="carousel">
+                  <q-carousel
+                    transition-prev="slide-right"
+                    transition-next="slide-left"
+                    swipeable
+                    animated
+                    v-model="slide"
+                    control-color="primary"
+                    navigation-icon="radio_button_unchecked"
+                    navigation
+                    padding
+                    height="200px"
+                    class="bg-white shadow-1 rounded-borders"
                   >
-                    <q-icon
-                      class="fas fa-wind"
-                      color="primary"
-                      size="56px"
-                    ></q-icon>
-                    <div class="q-mt-md text-center">
-                      Wind speed: {{ weatherData.wind.speed }} m/s
-                    </div>
-                    <div class="q-mt-md text-center">
-                      Wind gust: {{ weatherData.wind.gust }} m/s
-                    </div>
-                    <div class="q-mt-md text-center">
-                      Wind degree: {{ weatherData.wind.deg }} degree direction
-                    </div>
-                  </q-carousel-slide>
-                  <q-carousel-slide
-                    :name="2"
-                    class="column no-wrap flex-center"
-                    style="width: 500px"
+                    <q-carousel-slide
+                      :name="1"
+                      class="column no-wrap flex-center"
+                      style="width: 500px"
+                    >
+                      <q-icon
+                        class="fas fa-wind"
+                        color="primary"
+                        size="56px"
+                      ></q-icon>
+                      <div class="q-mt-md text-center">
+                        Wind speed: {{ weatherData.wind.speed }} m/s
+                      </div>
+                      <div class="q-mt-md text-center">
+                        Wind gust: {{ weatherData.wind.gust }} m/s
+                      </div>
+                      <div class="q-mt-md text-center">
+                        Wind degree: {{ weatherData.wind.deg }} degree direction
+                      </div>
+                    </q-carousel-slide>
+                    <q-carousel-slide
+                      :name="2"
+                      class="column no-wrap flex-center"
+                      style="width: 500px"
+                    >
+                      <q-icon
+                        class="fas fa-tint"
+                        color="primary"
+                        size="56px"
+                      ></q-icon>
+                      <div class="q-mt-md text-center">
+                        Humidity: {{ weatherData.main.humidity }} %
+                      </div>
+                    </q-carousel-slide>
+                    <q-carousel-slide
+                      :name="3"
+                      class="column no-wrap flex-center"
+                      style="width: 500px"
+                    >
+                      <q-icon
+                        class="fas fa-toggle-on"
+                        color="primary"
+                        size="56px"
+                      ></q-icon>
+                      <div class="q-mt-md text-center">
+                        Status: {{ weatherData.weather[0].description }}
+                      </div>
+                    </q-carousel-slide>
+                    <q-carousel-slide
+                      :name="4"
+                      class="column no-wrap flex-center"
+                      style="width: 500px"
+                    >
+                      <q-icon
+                        class="fas fa-water"
+                        color="primary"
+                        size="56px"
+                      ></q-icon>
+                      <div class="q-mt-md text-center">
+                        Sea level: {{ weatherData.main.sea_level }}
+                      </div>
+                    </q-carousel-slide>
+                  </q-carousel>
+                </q-dialog>
+              </div>
+              <q-scroll-area style="height: 230px; max-width: 1100px">
+                <div class="row no-wrap text-red">
+                  <div
+                    style="width: 128px"
+                    class="q-pa-sm"
+                    v-for="hour in weatherHourly"
+                    :key="hour.dt"
                   >
-                    <q-icon
-                      class="fas fa-tint"
-                      color="primary"
-                      size="56px"
-                    ></q-icon>
-                    <div class="q-mt-md text-center">
-                      Humidity: {{ weatherData.main.humidity }} %
+                    <div class="col-4">
+                      <img
+                        width="75"
+                        height="75"
+                        :src="`icons/${hour.weather[0].icon}@2x.png`"
+                      />
                     </div>
-                  </q-carousel-slide>
-                  <q-carousel-slide
-                    :name="3"
-                    class="column no-wrap flex-center"
-                    style="width: 500px"
-                  >
-                    <q-icon
-                      class="fas fa-toggle-on"
-                      color="primary"
-                      size="56px"
-                    ></q-icon>
-                    <div class="q-mt-md text-center">
-                      Status: {{ weatherData.weather[0].description }}
+                    <div class="col">
+                      <div class="row text-h5">{{ formatHour(hour.dt) }}</div>
+                      <div class="row">
+                        <span>{{ Math.round(hour.temp - 273.15) }}</span>
+                        <span class="text-h6 relative-position">&deg;C</span>
+                      </div>
                     </div>
-                  </q-carousel-slide>
-                  <q-carousel-slide
-                    :name="4"
-                    class="column no-wrap flex-center"
-                    style="width: 500px"
-                  >
-                    <q-icon
-                      class="fas fa-water"
-                      color="primary"
-                      size="56px"
-                    ></q-icon>
-                    <div class="q-mt-md text-center">
-                      Sea level: {{ weatherData.main.sea_level }}
-                    </div>
-                  </q-carousel-slide>
-                </q-carousel>
-              </q-dialog>
-            </div>
-          </div>
-          <q-scroll-area style="height: 230px; max-width: 500px">
-            <div class="row no-wrap text-yellow">
-              <div
-                style="width: 128px"
-                class="q-pa-sm"
-                v-for="hour in weatherHourly"
-                :key="hour.dt"
-              >
-                <div class="col-4">
-                  <img
-                    width="75"
-                    height="75"
-                    :src="`icons/${hour.weather[0].icon}@2x.png`"
-                  />
-                </div>
-                <div class="col">
-                  <div class="row text-h5">{{ formatHour(hour.dt) }}</div>
-                  <div class="row">
-                    <span>{{ Math.round(hour.temp - 273.15) }}</span>
-                    <span class="text-h6 relative-position">&deg;C</span> 
                   </div>
                 </div>
-              </div>
+              </q-scroll-area>
             </div>
-            </q-scroll-area>
+          </div>
+
           <div class="col-1">
             <div id="chart">
               <apexchart
-                type='line'
+                type="line"
                 height="350"
                 :options="chartOptions"
                 :series="series"
@@ -183,11 +192,10 @@
           </div>
         </div>
       </div>
-      <div class="col"></div>
     </template>
 
     <template v-else>
-      <div class="col column text-center text-yellow">
+      <div class="col column text-center text-red">
         <div class="col text-h2 text-weight-thin">Weather<br />App</div>
       </div>
       <q-btn @click="getLocation" class="col" flat>
@@ -433,7 +441,7 @@ export default defineComponent({
       }
 
       update(() => {
-        const needle = val.toLocaleLowerCase()
+        const needle = val.toLocaleLowerCase();
         var count = 0;
         const options = cities.filter((element) =>
           element.name.toLowerCase().includes(needle)
@@ -447,17 +455,18 @@ export default defineComponent({
     },
     getLocation() {
       this.$q.loading.show();
-      if(window.navigator.onLine){
+      if (window.navigator.onLine) {
         if (this.$q.platform.is.electron) {
-          api.get("https://freegeoip.app/json/")
-          .then((response) => {
-            this.lat = response.data.latitude;
-            this.lon = response.data.longitude;
-            this.getWeatherByCoords();
-          })
-          .catch(e => {
-            this.$q.notify("can't find place")
-          });
+          api
+            .get("https://freegeoip.app/json/")
+            .then((response) => {
+              this.lat = response.data.latitude;
+              this.lon = response.data.longitude;
+              this.getWeatherByCoords();
+            })
+            .catch((e) => {
+              this.$q.notify("can't find place");
+            });
         } else {
           navigator.geolocation.getCurrentPosition((response) => {
             this.lat = response.coords.latitude;
@@ -465,15 +474,22 @@ export default defineComponent({
             this.getWeatherByCoords();
           });
         }
-      } else{
-        var fs = window.electronFs
-        try { 
-            alert('No internet connection'); 
-            this.weatherData = JSON.parse(fs.readFileSync('current.json',{encoding: 'utf8', flag:'r'}));
-            this.weatherDailys = JSON.parse(fs.readFileSync('daily.json',{encoding: 'utf8', flag:'r'}));
-            this.weatherHourly = JSON.parse(fs.readFileSync('hourly.json',{encoding: 'utf8', flag:'r'}));
+      } else {
+        var fs = window.electronFs;
+        try {
+          alert("No internet connection");
+          this.weatherData = JSON.parse(
+            fs.readFileSync("current.json", { encoding: "utf8", flag: "r" })
+          );
+          this.weatherDailys = JSON.parse(
+            fs.readFileSync("daily.json", { encoding: "utf8", flag: "r" })
+          );
+          this.weatherHourly = JSON.parse(
+            fs.readFileSync("hourly.json", { encoding: "utf8", flag: "r" })
+          );
+        } catch (e) {
+          alert("Failed to read the file !");
         }
-        catch(e) { alert('Failed to read the file !'); }
       }
     },
     async getWeatherByCoords() {
@@ -484,7 +500,7 @@ export default defineComponent({
         )
         .then((response) => {
           this.weatherData = response.data;
-          this.saveFile(response.data,1)
+          this.saveFile(response.data, 1);
         })
         .catch((e) => {
           this.$q.notify("can't find place 1");
@@ -501,7 +517,7 @@ export default defineComponent({
         .then((response) => {
           this.weatherDailys = response.data.daily;
           if (checkCurrent) {
-            this.saveFile(response.data,2)
+            this.saveFile(response.data, 2);
           }
           this.tableInfo();
         })
@@ -509,7 +525,7 @@ export default defineComponent({
           this.$q.notify("can't find place");
         });
     },
-    getHourly(lat, lon,checkCurrent) {
+    getHourly(lat, lon, checkCurrent) {
       api
         .get(
           `${this.apiUrl2}lat=${lat}&lon=${lon}&exclude=current,minutely,daily&appid=${this.apiKey}`
@@ -519,7 +535,7 @@ export default defineComponent({
           this.weatherHourly.splice(12, 36);
           this.$q.loading.hide();
           if (checkCurrent) {
-            this.saveFile(response.data,3)
+            this.saveFile(response.data, 3);
           }
         })
         .catch((e) => {
@@ -527,7 +543,7 @@ export default defineComponent({
         });
     },
     async getWeatherBySearch() {
-      console.log(this.search)
+      console.log(this.search);
       let latitude = 0;
       let longitude = 0;
       this.$q.loading.show();
@@ -552,18 +568,17 @@ export default defineComponent({
       let wind = this.series[1].data.map(() => {});
       let humid = this.series[2].data.map(() => {});
 
-      
       this.weatherDailys.forEach(function (daily) {
         day.push(change.dayWeekName(daily.dt));
       });
-      this.updateCol(day)
+      this.updateCol(day);
       // this.chartOptions = {
       //   ...this.chartOptions,
       //   ...{
       //     xaxis: {
       //       categories: day,
       //     },
-      //   },  
+      //   },
       // };
       console.log(day);
       this.weatherDailys.forEach(function (daily) {
@@ -588,16 +603,16 @@ export default defineComponent({
         },
       ];
     },
-    updateCol(day){
+    updateCol(day) {
       this.chartOptions = {
         ...this.chartOptions,
         ...{
           xaxis: {
-            categories: day
+            categories: day,
           },
-        },  
+        },
       };
-      console.log(this.chartOptions)
+      console.log(this.chartOptions);
     },
     weekDate(value) {
       const entireWeek =
@@ -626,20 +641,27 @@ export default defineComponent({
       return myDay;
     },
     // update file json
-    saveFile: function(val, file) {
-      console.log(val)
-      const data = JSON.stringify(val)
-      console.log(data)
-      var fs = window.electronFs
-      try { 
-        switch(file){
-          case 1: fs.writeFileSync('current.json', data, 'utf-8'); break;
-          case 2: fs.writeFileSync('daily.json', data, 'utf-8'); break;
-          case 3: fs.writeFileSync('hourly.json', data, 'utf-8'); break;
+    saveFile: function (val, file) {
+      console.log(val);
+      const data = JSON.stringify(val);
+      console.log(data);
+      var fs = window.electronFs;
+      try {
+        switch (file) {
+          case 1:
+            fs.writeFileSync("current.json", data, "utf-8");
+            break;
+          case 2:
+            fs.writeFileSync("daily.json", data, "utf-8");
+            break;
+          case 3:
+            fs.writeFileSync("hourly.json", data, "utf-8");
+            break;
         }
+      } catch (e) {
+        alert("Failed to save the file !");
       }
-      catch(e) { alert('Failed to save the file !'); }
-    }
+    },
   },
 });
 </script>
