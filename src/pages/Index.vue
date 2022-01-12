@@ -377,8 +377,8 @@ export default defineComponent({
       this.getDaily(this.lat, this.lon, true);
       this.getHourly(this.lat, this.lon, true);
     },
-    getDaily(lat, lon, checkCurrent) {
-      api
+    async getDaily(lat, lon, checkCurrent) {
+      await api
         .get(
           `${this.apiUrl2}lat=${lat}&lon=${lon}&exclude=current,minutely,hourly&appid=${this.apiKey}`
         )
@@ -392,8 +392,8 @@ export default defineComponent({
           this.$q.notify("can't find place aaa");
         });
     },
-    getHourly(lat, lon, checkCurrent) {
-      api
+    async getHourly(lat, lon, checkCurrent) {
+      await api
         .get(
           `${this.apiUrl2}lat=${lat}&lon=${lon}&exclude=current,minutely,daily&appid=${this.apiKey}`
         )
@@ -409,11 +409,11 @@ export default defineComponent({
           this.$q.notify("can't find place");
         });
     },
-    getWeatherBySearch() {
+    async getWeatherBySearch() {
       let latitude = 0;
       let longitude = 0;
       this.$q.loading.show();
-      api
+      await api
         .get(`${this.apiUrl}q=${this.search}&appid=${this.apiKey}&units=metric`)
         .then((response) => {
           this.weatherData = response.data;

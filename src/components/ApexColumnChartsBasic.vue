@@ -167,7 +167,6 @@ export default {
             categories: dayOptions,
           },
         },
-      console.log(this.chartOptions.xaxis.categories);
       newVal.forEach(function (daily) {
         temp.push(Math.round(daily.temp.eve - 273.15));
       });
@@ -177,7 +176,6 @@ export default {
       newVal.forEach(function (daily) {
         humid.push(daily.humidity);
       });
-      // Math.round(day.temp.eve - 273.15)
       this.series = [
         {
           name: "Temparature",
@@ -195,7 +193,6 @@ export default {
           data: humid,
         },
       ];
-      console.log(this.series)
     },
     dayWeekName(date) {
       let myDate = new Date(date * 1000);
