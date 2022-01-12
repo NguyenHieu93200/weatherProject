@@ -1,11 +1,11 @@
 <template>
   <q-page class="flex column" :class="bgClass">
     <div class="col q-pt-lg q-px-md" style="max-height: 100px">
-      <q-input v-model="search" @keyup.enter="getWeatherBySearch">
+      <!-- <q-input v-model="search" @keyup.enter="getWeatherBySearch">
         <template v-slot:append>
           <q-btn @click="getWeatherBySearch" round dense flat icon="search" />
         </template>
-      </q-input>
+      </q-input> -->
       <q-select
         v-model="search"
         dark
@@ -13,14 +13,10 @@
         use-input
         :options="options"
         @filter="filterFn"
+        @keyup.enter="getWeatherBySearch"
       >
         <template v-slot:prepend>
           <q-icon @click="getLocation" name="my_location" />
-        </template>
-        <template v-slot:no-option>
-          <q-item>
-            <q-item-section class="text-grey"> No results </q-item-section>
-          </q-item>
         </template>
       </q-select>
     </div>
@@ -160,12 +156,9 @@
 
           <div class="col-1">
             <div id="chart">
-              <apexchart
-                type="line"
-                height="350"
-                :options="chartOptions"
-                :series="series"
-              ></apexchart>
+              <ApexColumnChartsBasic
+                :weatherDailys="weatherDailys"
+              ></ApexColumnChartsBasic>
             </div>
           </div>
         </div>
@@ -212,12 +205,12 @@ import { ref } from "vue";
 import { api } from "boot/axios";
 import moment from "moment";
 import cities from "cities.json";
-import VueApexCharts from "vue3-apexcharts";
+import ApexColumnChartsBasic from "../components/ApexColumnChartsBasic"
 
 export default defineComponent({
   name: "PageIndex",
   components: {
-    apexchart: VueApexCharts,
+    ApexColumnChartsBasic
   },
   setup() {
     return {
@@ -231,6 +224,7 @@ export default defineComponent({
       weatherData: null,
       weatherDailys: null,
       weatherHourly: null,
+      categories: [],
       lat: null,
       lon: null,
       apiUrl: "https://api.openweathermap.org/data/2.5/weather?",
@@ -238,132 +232,6 @@ export default defineComponent({
       apiKey: "406f101ee5301278cd0a98ef50706a37",
       errors: [],
       options: [],
-      series: [
-        {
-          name: "Temparature",
-          type: "column",
-          data: [],
-        },
-        {
-          name: "Wind",
-          type: "column",
-          data: [],
-        },
-        {
-          name: "Humidity",
-          type: "line",
-          data: [],
-        },
-      ],
-      chartOptions: {
-        chart: {
-          type: "line",
-          height: 350,
-          stacked: false,
-        },
-        // plotOptions: {
-        //   bar: {
-        //     horizontal: false,
-        //     columnWidth: "55%",
-        //     endingShape: "rounded",
-        //   },
-        // },
-        title: {
-          text: "Graph",
-          align: "left",
-          offsetX: 110,
-        },
-        dataLabels: {
-          enabled: false,
-        },
-        stroke: {
-          width: [1, 1, 4],
-        },
-        xaxis: {
-          categories: [],
-        },
-        yaxis: [
-          {
-            axisTicks: {
-              show: true,
-            },
-            axisBorder: {
-              show: true,
-              color: "#008FFB",
-            },
-            labels: {
-              style: {
-                colors: "#008FFB",
-              },
-            },
-            title: {
-              text: "Temperature (°C)",
-              style: {
-                color: "#008FFB",
-              },
-            },
-            tooltip: {
-              enabled: true,
-            },
-          },
-          {
-            seriesName: "Wind Speed",
-            opposite: true,
-            axisTicks: {
-              show: true,
-            },
-            axisBorder: {
-              show: true,
-              color: "#00E396",
-            },
-            labels: {
-              style: {
-                colors: "#00E396",
-              },
-            },
-            title: {
-              text: "Wind Speed (m/s)",
-              style: {
-                color: "#00E396",
-              },
-            },
-          },
-          {
-            seriesName: "Humidity",
-            opposite: true,
-            axisTicks: {
-              show: true,
-            },
-            axisBorder: {
-              show: true,
-              color: "#FEB019",
-            },
-            labels: {
-              style: {
-                colors: "#FEB019",
-              },
-            },
-            title: {
-              text: "Humidity (%)",
-              style: {
-                color: "#FEB019",
-              },
-            },
-          },
-        ],
-        tooltip: {
-          fixed: {
-            enabled: true,
-            position: "topLeft", // topRight, topLeft, bottomRight, bottomLeft
-            offsetY: 30,
-            offsetX: 60,
-          },
-        },
-        legend: {
-          horizontalAlign: "left",
-          offsetX: 40,
-        },
-      },
     };
   },
   computed: {
@@ -441,10 +309,10 @@ export default defineComponent({
       }
 
       update(() => {
-        const needle = val.toLocaleLowerCase();
+        const term = val.toLocaleLowerCase();
         var count = 0;
         const options = cities.filter((element) =>
-          element.name.toLowerCase().includes(needle)
+          element.name.toLowerCase().includes(term)
         );
         this.options = [];
         while (count < 5) {
@@ -519,10 +387,9 @@ export default defineComponent({
           if (checkCurrent) {
             this.saveFile(response.data, 2);
           }
-          this.tableInfo();
         })
         .catch((e) => {
-          this.$q.notify("can't find place");
+          this.$q.notify("can't find place aaa");
         });
     },
     getHourly(lat, lon, checkCurrent) {
@@ -542,12 +409,11 @@ export default defineComponent({
           this.$q.notify("can't find place");
         });
     },
-    async getWeatherBySearch() {
-      console.log(this.search);
+    getWeatherBySearch() {
       let latitude = 0;
       let longitude = 0;
       this.$q.loading.show();
-      await api
+      api
         .get(`${this.apiUrl}q=${this.search}&appid=${this.apiKey}&units=metric`)
         .then((response) => {
           this.weatherData = response.data;
@@ -560,59 +426,6 @@ export default defineComponent({
         });
       this.getDaily(latitude, longitude);
       this.getHourly(latitude, longitude);
-    },
-    tableInfo() {
-      let change = this;
-      let day = this.chartOptions.xaxis.categories.map(() => {});
-      let temp = this.series[0].data.map(() => {});
-      let wind = this.series[1].data.map(() => {});
-      let humid = this.series[2].data.map(() => {});
-
-      this.weatherDailys.forEach(function (daily) {
-        day.push(change.dayWeekName(daily.dt));
-      });
-      this.updateCol(day);
-      // this.chartOptions = {
-      //   ...this.chartOptions,
-      //   ...{
-      //     xaxis: {
-      //       categories: day,
-      //     },
-      //   },
-      // };
-      console.log(day);
-      this.weatherDailys.forEach(function (daily) {
-        temp.push(Math.round(daily.temp.eve - 273.15));
-      });
-      this.weatherDailys.forEach(function (daily) {
-        wind.push(daily.wind_speed);
-      });
-      this.weatherDailys.forEach(function (daily) {
-        humid.push(daily.humidity);
-      });
-      // Math.round(day.temp.eve - 273.15)
-      this.series = [
-        {
-          data: temp,
-        },
-        {
-          data: wind,
-        },
-        {
-          data: humid,
-        },
-      ];
-    },
-    updateCol(day) {
-      this.chartOptions = {
-        ...this.chartOptions,
-        ...{
-          xaxis: {
-            categories: day,
-          },
-        },
-      };
-      console.log(this.chartOptions);
     },
     weekDate(value) {
       const entireWeek =
@@ -642,9 +455,7 @@ export default defineComponent({
     },
     // update file json
     saveFile: function (val, file) {
-      console.log(val);
       const data = JSON.stringify(val);
-      console.log(data);
       var fs = window.electronFs;
       try {
         switch (file) {
