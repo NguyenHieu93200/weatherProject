@@ -1,5 +1,5 @@
 <template>
-  <GoogleMap
+  <GoogleMap 
   api-key="AIzaSyClvH-MxHTMWVOVxND6wHPkJkWCGjYMZIA"
   style="width: 100%; height: 500px"
   :center="center"
@@ -15,8 +15,14 @@ export default defineComponent({
   name: 'mapPick',
   components: { GoogleMap},
    props: {
-     lat: String,
-     lng: String,
+     lat:{
+       type: String,
+       required: true
+     },
+     lng:{
+       type: String,
+       required: true
+     },
    },
   data() {
     var lat = parseFloat(this.lat);
@@ -27,8 +33,12 @@ export default defineComponent({
   },
   watch: {
       lat: function(newVal, oldVal) {
-          if(newVal != oldVal)
-            this.$forceUpdate();
+          // if(newVal != oldVal)
+          //   this.$forceUpdate();
+      },
+      lng: function(newVal, oldVal) {
+          // if(newVal != oldVal)
+          //   this.$forceUpdate();
       }
   }
 })

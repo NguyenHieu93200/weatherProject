@@ -186,8 +186,8 @@
         </div>
       </div>
       <mapPick
-      :lat = lat
-      :lng = lon
+      :lat = "lat"
+      :lng = "lon"
       ></mapPick>
     </template>
 
@@ -423,8 +423,8 @@ export default defineComponent({
           this.weatherData = response.data;
           latitude = response.data.coord.lat;
           longitude = response.data.coord.lon;
-          this.lat = latitude
-          this.lon = longitude
+          this.lat = response.data.coord.lat;
+          this.lon = response.data.coord.lon;
         })
         .catch((e) => {
           this.$q.notify("can't find place");
