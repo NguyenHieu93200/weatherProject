@@ -59,7 +59,7 @@
                     navigation
                     padding
                     height="200px"
-                    class="bg-white shadow-1 rounded-borders"
+                    class="bg-pageone shadow-1 rounded-borders"
                   >
                     <q-carousel-slide
                       :name="1"
@@ -272,7 +272,7 @@ export default defineComponent({
             return "bg-lightrain";
             break;
           case "10n":
-            return "bg-ligthrain1";
+            return "bg-lightrain1";
             break;
           case "11d":
             return "bg-thunder";
@@ -368,6 +368,7 @@ export default defineComponent({
         )
         .then((response) => {
           this.weatherData = response.data;
+          // console.log(response.data);
           this.saveFile(response.data, 1);
         })
         .catch((e) => {
@@ -417,6 +418,7 @@ export default defineComponent({
         .get(`${this.apiUrl}q=${this.search}&appid=${this.apiKey}&units=metric`)
         .then((response) => {
           this.weatherData = response.data;
+          console.log(response.data);
           latitude = response.data.coord.lat;
           longitude = response.data.coord.lon;
         })
@@ -587,6 +589,12 @@ export default defineComponent({
     background-position: center
     background-repeat: no-repeat
     background-size: cover
+.bg-pageone
+  background: url(/Clear.jpg)
+  height: 100%
+  background-position: center
+  background-repeat: no-repeat
+  background-size: cover
 .degree
   top: -50px
 .skyline
