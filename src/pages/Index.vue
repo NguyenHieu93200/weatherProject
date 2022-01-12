@@ -417,15 +417,14 @@ export default defineComponent({
         .get(`${this.apiUrl}q=${this.search}&appid=${this.apiKey}&units=metric`)
         .then((response) => {
           this.weatherData = response.data;
-          // this.$q.loading.hide()
           latitude = response.data.coord.lat;
           longitude = response.data.coord.lon;
         })
         .catch((e) => {
           this.$q.notify("can't find place");
         });
-      this.getDaily(latitude, longitude);
-      this.getHourly(latitude, longitude);
+      this.getDaily(latitude, longitude, false);
+      this.getHourly(latitude, longitude, false);
     },
     weekDate(value) {
       const entireWeek =
