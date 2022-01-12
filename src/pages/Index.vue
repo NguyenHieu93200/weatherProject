@@ -126,7 +126,7 @@
                   </q-carousel>
                 </q-dialog>
               </div>
-              <q-scroll-area style="height: 230px; max-width: 1100px">
+              <q-scroll-area style="height: 200px; max-width: 1100px">
                 <div class="row no-wrap text-red">
                   <div
                     style="width: 128px"
@@ -143,9 +143,9 @@
                     </div>
                     <div class="col">
                       <div class="row text-h5">{{ formatHour(hour.dt) }}</div>
-                      <div class="row">
-                        <span>{{ Math.round(hour.temp - 273.15) }}</span>
-                        <span class="text-h6 relative-position">&deg;C</span>
+                      <div class="row ">
+                        <span class="text-h4 text-center">{{ Math.round(hour.temp - 273.15) }}</span>
+                        <span>&deg;C</span>
                       </div>
                     </div>
                   </div>
@@ -164,7 +164,7 @@
         </div>
         <div class="col-4 text-red">
           <div
-            class="text-h3 text-weight-thin q-my-lq relative-position row"
+            class="text-h3 text-weight-medium q-my-lq relative-position row"
             v-for="day in weatherDailys"
             :key="day.dt"
           >
@@ -185,11 +185,15 @@
           </div>
         </div>
       </div>
+      <mapPick
+      :lat = "lat"
+      :lng = "lon"
+      ></mapPick>
     </template>
 
     <template v-else>
       <div class="col column text-center text-red">
-        <div class="col text-h2 text-weight-thin">Weather<br />App</div>
+        <div class="col text-h2 text-weight-medium">Weather<br />App</div>
       </div>
       <q-btn @click="getLocation" class="col" flat>
         <q-icon left size="3em" name="my_location" />
@@ -206,11 +210,13 @@ import { api } from "boot/axios";
 import moment from "moment";
 import cities from "cities.json";
 import ApexColumnChartsBasic from "../components/ApexColumnChartsBasic"
+import mapPick from "../components/mapPick.vue"
 
 export default defineComponent({
   name: "PageIndex",
   components: {
-    ApexColumnChartsBasic
+    ApexColumnChartsBasic,
+    mapPick
   },
   setup() {
     return {
@@ -372,7 +378,6 @@ export default defineComponent({
           this.saveFile(response.data, 1);
         })
         .catch((e) => {
-          this.$q.notify("can't find place 1");
         });
 
       this.getDaily(this.lat, this.lon, true);
@@ -390,7 +395,6 @@ export default defineComponent({
           }
         })
         .catch((e) => {
-          this.$q.notify("can't find place aaa");
         });
     },
     async getHourly(lat, lon, checkCurrent) {
@@ -421,6 +425,8 @@ export default defineComponent({
           console.log(response.data);
           latitude = response.data.coord.lat;
           longitude = response.data.coord.lon;
+          this.lat = response.data.coord.lat;
+          this.lon = response.data.coord.lon;
         })
         .catch((e) => {
           this.$q.notify("can't find place");

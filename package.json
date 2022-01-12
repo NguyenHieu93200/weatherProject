@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
+    "@tomtom-international/web-sdk-maps": "^6.15.0",
+    "@tomtom-international/web-sdk-services": "^6.15.0",
     "apexcharts": "^3.32.1",
     "axios": "^0.21.1",
     "cities.json": "^1.1.5",
@@ -20,13 +22,17 @@
     "path": "^0.12.7",
     "quasar": "^2.0.0",
     "vue-apexcharts": "^1.6.2",
+    "vue-browser-geolocation": "^1.8.0",
     "vue-i18n": "^9.0.0",
+    "vue2-google-maps": "^0.10.7",
     "vue3-apexcharts": "^1.4.1",
+    "vue3-google-map": "^0.8.3",
     "vuex": "^4.0.1"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.14",
     "@quasar/app": "^3.0.0",
+    "@vue-leaflet/vue-leaflet": "^0.6.1",
     "electron": "^16.0.4",
     "eslint": "^7.14.0",
     "eslint-config-prettier": "^8.1.0",
