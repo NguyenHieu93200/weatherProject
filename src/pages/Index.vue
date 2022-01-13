@@ -43,8 +43,8 @@
               </div>
               <div class="col text-center">
                 <q-btn
-                  label="Detail"
-                  color="primary"
+                  label="More"
+                  color="info"
                   @click="carousel = true"
                 />
                 <q-dialog v-model="carousel">
