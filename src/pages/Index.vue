@@ -54,73 +54,73 @@
                     swipeable
                     animated
                     v-model="slide"
-                    control-color="primary"
+                    control-color="black"
                     navigation-icon="radio_button_unchecked"
                     navigation
                     padding
-                    height="200px"
-                    class="bg-pageone shadow-1 rounded-borders"
+                    height="300px"
+                    class="shadow-1 rounded-borders"
                   >
                     <q-carousel-slide
                       :name="1"
-                      class="column no-wrap flex-center"
+                      class="bg-wind column no-wrap flex-center"
                       style="width: 500px"
                     >
                       <q-icon
                         class="fas fa-wind"
-                        color="primary"
-                        size="56px"
+                        color="blue"
+                        size="40px"
                       ></q-icon>
-                      <div class="q-mt-md text-center">
+                      <div class="q-mt-md text-h5 text-center text-blue text-weight-medium">
                         Wind speed: {{ weatherData.wind.speed }} m/s
                       </div>
-                      <div class="q-mt-md text-center">
+                      <div class="q-mt-md text-h5 text-center text-blue text-weight-medium">
                         Wind gust: {{ weatherData.wind.gust }} m/s
                       </div>
-                      <div class="q-mt-md text-center">
+                      <div class="q-mt-md text-h5 text-center text-blue text-weight-medium">
                         Wind degree: {{ weatherData.wind.deg }} degree direction
                       </div>
                     </q-carousel-slide>
                     <q-carousel-slide
                       :name="2"
-                      class="column no-wrap flex-center"
+                      class="bg-humidity column no-wrap flex-center"
                       style="width: 500px"
                     >
                       <q-icon
                         class="fas fa-tint"
-                        color="primary"
+                        color="orange"
                         size="56px"
                       ></q-icon>
-                      <div class="q-mt-md text-center">
+                      <div class="q-mt-md text-h4 text-center text-orange text-weight-medium">
                         Humidity: {{ weatherData.main.humidity }} %
                       </div>
                     </q-carousel-slide>
                     <q-carousel-slide
                       :name="3"
-                      class="column no-wrap flex-center"
+                      class="bg-status column no-wrap flex-center " 
                       style="width: 500px"
                     >
                       <q-icon
                         class="fas fa-toggle-on"
-                        color="primary"
+                        color="yellow"
                         size="56px"
                       ></q-icon>
-                      <div class="q-mt-md text-center">
+                      <div class="q-mt-md text-h4 text-center text-yellow text-weight-medium">
                         Status: {{ weatherData.weather[0].description }}
                       </div>
                     </q-carousel-slide>
                     <q-carousel-slide
                       :name="4"
-                      class="column no-wrap flex-center"
+                      class="bg-sealevel column no-wrap flex-center"
                       style="width: 500px"
                     >
                       <q-icon
                         class="fas fa-water"
-                        color="primary"
+                        color="cyan"
                         size="56px"
                       ></q-icon>
-                      <div class="q-mt-md text-center">
-                        Sea level: {{ weatherData.main.sea_level }}
+                      <div class="q-mt-md text-h4 text-center text-cyan text-weight-medium">
+                        Sea level: {{ weatherData.main.sea_level }} m
                       </div>
                     </q-carousel-slide>
                   </q-carousel>
@@ -595,8 +595,26 @@ export default defineComponent({
     background-position: center
     background-repeat: no-repeat
     background-size: cover
-.bg-pageone
+.bg-wind
+  background: url(/wind.jpg)
+  height: 100%
+  background-position: center
+  background-repeat: no-repeat
+  background-size: cover
+.bg-status
   background: url(/Clear.jpg)
+  height: 100%
+  background-position: center
+  background-repeat: no-repeat
+  background-size: cover
+.bg-humidity
+  background: url(/humidity.jpg)
+  height: 100%
+  background-position: center
+  background-repeat: no-repeat
+  background-size: cover
+.bg-sealevel
+  background: url(/sealevel.jpg)
   height: 100%
   background-position: center
   background-repeat: no-repeat
