@@ -38,7 +38,7 @@
               </div>
               <div class="col text-center">
                 <img
-                  :src="`http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`"
+                  :src="`icons/${weatherData.weather[0].icon}@2x.png`"
                 />
               </div>
               <div class="col text-center">
@@ -172,7 +172,7 @@
               <img
                 width="75"
                 height="75"
-                :src="`http://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`"
+                :src="`icons/${day.weather[0].icon}@2x.png`"
               />
             </div>
             <div class="col">
@@ -328,8 +328,7 @@ export default defineComponent({
       });
     },
     getLocation() {
-      this.$q.loading.show();
-      if (window.navigator.onLine) {
+      if (!window.navigator.onLine) {
         if (this.$q.platform.is.electron) {
           api
             .get("https://freegeoip.app/json/")
@@ -351,16 +350,20 @@ export default defineComponent({
       } else {
         var fs = window.electronFs;
         try {
+          let weatherDailys
+          let weatherHourly
           alert("No internet connection");
           this.weatherData = JSON.parse(
             fs.readFileSync("current.json", { encoding: "utf8", flag: "r" })
           );
-          this.weatherDailys = JSON.parse(
+          weatherDailys = JSON.parse(
             fs.readFileSync("daily.json", { encoding: "utf8", flag: "r" })
           );
-          this.weatherHourly = JSON.parse(
+          this.weatherDailys = weatherDailys.daily
+          weatherHourly = JSON.parse(
             fs.readFileSync("hourly.json", { encoding: "utf8", flag: "r" })
           );
+          this.weatherHourly = weatherHourly.hourly
         } catch (e) {
           alert("Failed to read the file !");
         }
