@@ -328,7 +328,7 @@ export default defineComponent({
       });
     },
     getLocation() {
-      if (!window.navigator.onLine) {
+      if (window.navigator.onLine) {
         if (this.$q.platform.is.electron) {
           api
             .get("https://freegeoip.app/json/")
